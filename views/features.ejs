@@ -1,0 +1,28 @@
+<section class="max-w-6xl mx-auto px-6 py-16">
+  <div class="max-w-3xl">
+    <h1 class="text-3xl font-semibold text-white">Features & Press</h1>
+    <p class="text-slate-300 mt-2">Conversations, interviews, and writeups featuring the work.</p>
+  </div>
+  <div class="mt-10 grid gap-6 md:grid-cols-2">
+    <% if (features.length) { %>
+      <% features.forEach((feature) => { %>
+        <article class="bg-slate-900/40 border border-slate-800/60 rounded-2xl p-6 space-y-3">
+          <% if (feature.image_url) { %>
+            <img src="<%= feature.image_url %>" alt="<%= feature.title %> logo" class="h-12 object-contain" loading="lazy" />
+          <% } %>
+          <h2 class="text-xl font-semibold text-white"><%= feature.title %></h2>
+          <% if (feature.blurb) { %>
+            <p class="text-sm text-slate-300"><%= feature.blurb %></p>
+          <% } else if (feature.description) { %>
+            <p class="text-sm text-slate-300"><%= feature.description %></p>
+          <% } %>
+          <a class="inline-flex items-center text-sm font-semibold text-indigo-300 hover:text-white" href="<%= feature.source_url %>" target="_blank" rel="noopener noreferrer">
+            View feature →
+          </a>
+        </article>
+      <% }) %>
+    <% } else { %>
+      <p class="text-slate-400">Showcase your press and podcast appearances here once added in admin.</p>
+    <% } %>
+  </div>
+</section>

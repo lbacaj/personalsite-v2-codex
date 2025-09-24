@@ -1,0 +1,60 @@
+<section class="min-h-screen flex items-center justify-center bg-slate-950 px-6 py-16">
+  <div class="w-full max-w-sm rounded-2xl border border-slate-900 bg-slate-950/80 p-8 shadow-xl">
+    <p class="text-sm uppercase tracking-[0.3em] text-indigo-300">Admin</p>
+    <h1 class="mt-4 text-2xl font-semibold text-white">Enter admin token</h1>
+    <p class="mt-2 text-sm text-slate-300">Use the ADMIN_TOKEN from your environment configuration to access the dashboard.</p>
+    <form id="admin-login-form" class="mt-6 space-y-4">
+      <input type="hidden" name="_csrf" value="<%= csrfToken || '' %>" />
+      <div>
+        <label class="block text-sm font-medium text-slate-200" for="token">Admin token</label>
+        <input
+          type="password"
+          id="token"
+          name="token"
+          class="mt-1 w-full rounded-md border border-slate-800 bg-slate-950 px-4 py-3 text-white focus:border-indigo-400 focus:outline-none"
+          required
+        />
+      </div>
+      <button type="submit" class="w-full inline-flex items-center justify-center rounded-md bg-indigo-500 px-4 py-3 text-sm font-semibold text-white hover:bg-indigo-400">
+        Sign in
+      </button>
+      <p id="admin-login-feedback" class="text-sm"></p>
+    </form>
+  </div>
+</section>
+
+<script>
+  window.csrfToken = '<%= csrfToken || '' %>';
+  const adminLoginForm = document.getElementById('admin-login-form');
+  if (adminLoginForm) {
+    adminLoginForm.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const feedback = document.getElementById('admin-login-feedback');
+      feedback.textContent = '';
+      feedback.className = 'text-sm';
+      const formData = new FormData(adminLoginForm);
+      const payload = Object.fromEntries(formData.entries());
+      try {
+        const response = await fetch('/admin/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-Token': window.csrfToken || ''
+          },
+          credentials: 'same-origin',
+          body: JSON.stringify(payload),
+        });
+        if (response.ok) {
+          window.location.href = '/admin';
+        } else {
+          const error = await response.json();
+          feedback.textContent = error.error || 'Invalid token.';
+          feedback.className = 'text-sm text-rose-300 mt-3';
+        }
+      } catch (error) {
+        feedback.textContent = 'Network error. Try again.';
+        feedback.className = 'text-sm text-rose-300 mt-3';
+      }
+    });
+  }
+</script>

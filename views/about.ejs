@@ -1,0 +1,66 @@
+<section class="max-w-5xl mx-auto px-6 py-16 space-y-12">
+  <div class="text-sm uppercase tracking-[0.3em] text-indigo-400">Louie Bacaj</div>
+  <div class="grid gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:items-start">
+    <div class="space-y-6">
+      <h1 class="text-3xl md:text-4xl font-bold text-white">About me</h1>
+      <p class="text-sm text-slate-400 italic">
+        This is the long version—updated January 2025. For the quick intro, head back to the <a class="underline hover:text-white" href="/">home page</a>.
+      </p>
+      <div class="prose prose-invert max-w-none leading-relaxed text-slate-100">
+        <img
+          src="<%= heroImage %>"
+          alt="<%= heroImageAlt %>"
+          class="float-none mb-6 w-full rounded-3xl border border-slate-800/70 shadow-xl lg:float-right lg:ml-6 lg:w-80"
+          loading="lazy"
+        />
+        <%- aboutHtml %>
+      </div>
+    </div>
+  </div>
+
+  <div class="space-y-4 border-t border-slate-800/60 pt-10">
+    <h2 class="text-2xl font-semibold text-white">Connect with me</h2>
+    <p class="text-sm text-slate-300">
+      Want to collaborate or have a podcast or newsletter you think I'd be a fit for? Email me at
+      <a class="text-indigo-300 hover:text-white" href="mailto:louie@louiebacaj.com">louie@louiebacaj.com</a>.
+    </p>
+    <p class="text-sm text-slate-300">I read every message even if I can't reply to them all.</p>
+  </div>
+
+  <div class="space-y-6 border-t border-slate-800/60 pt-10">
+    <div class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+      <h2 class="text-2xl font-semibold text-white">How I might be able to help you</h2>
+      <p class="text-sm text-slate-400">A few places where I'm building, teaching, and sharing.</p>
+    </div>
+    <div class="grid gap-6 md:grid-cols-3">
+      <% if (Array.isArray(helpCards) && helpCards.length) { %>
+        <% helpCards.forEach((card) => { %>
+          <article class="flex h-full flex-col items-start rounded-2xl border border-slate-800/70 bg-slate-900/40 p-6">
+            <% if (card.image) { %>
+              <img
+                src="<%= card.image %>"
+                alt="<%= card.title %>"
+                class="mb-4 h-24 w-24 rounded-full border border-slate-800/60 object-cover"
+                loading="lazy"
+              />
+            <% } %>
+            <h3 class="text-lg font-semibold text-white"><%= card.title %></h3>
+            <p class="mt-3 text-sm text-slate-300 flex-1"><%= card.description %></p>
+            <% if (card.linkUrl) { %>
+              <a
+                class="mt-4 inline-flex items-center text-sm font-semibold text-indigo-300 hover:text-white"
+                href="<%= card.linkUrl %>"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <%= card.linkText || 'Learn more' %> →
+              </a>
+            <% } %>
+          </article>
+        <% }) %>
+      <% } else { %>
+        <p class="text-sm text-slate-400">Add help cards in Settings → Homepage.</p>
+      <% } %>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,26 @@
+# Node dependencies
+node_modules/
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS
+.DS_Store
+
+# Database / local data
+*.sqlite
+*.db
+*.db-shm
+*.db-wal
+*.db-journal
+
+# Builds
+build/
+dist/

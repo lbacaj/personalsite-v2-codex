@@ -1,0 +1,42 @@
+<section class="max-w-6xl mx-auto px-6 py-16">
+  <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+    <div>
+      <h1 class="text-3xl font-semibold text-white">Projects</h1>
+      <p class="text-slate-300 mt-2">Open source repositories, experiments, and community tools.</p>
+    </div>
+    <a class="text-sm text-indigo-300 hover:text-white" href="https://github.com/lbacaj" target="_blank" rel="noopener noreferrer">View GitHub →</a>
+  </div>
+  <div class="mt-10 grid gap-6 md:grid-cols-2">
+    <% if (projects.length) { %>
+      <% projects.forEach((project) => { %>
+        <article class="bg-slate-900/40 border border-slate-800/60 rounded-2xl p-6 flex flex-col gap-4">
+          <div>
+            <h2 class="text-xl font-semibold text-white"><%= project.title %></h2>
+            <% if (project.blurb) { %>
+              <p class="text-sm text-slate-300 mt-2"><%= project.blurb %></p>
+            <% } else if (project.description) { %>
+              <p class="text-sm text-slate-300 mt-2"><%= project.description %></p>
+            <% } %>
+          </div>
+          <div class="flex flex-wrap gap-2 text-xs text-slate-400">
+            <% if (project.tags) { %>
+              <% project.tags.split(',').forEach((tag) => { %>
+                <span class="rounded-full bg-slate-800/80 px-3 py-1"><%= tag.trim() %></span>
+              <% }) %>
+            <% } %>
+          </div>
+          <a
+            class="mt-auto inline-flex items-center text-sm font-semibold text-indigo-300 hover:text-white"
+            href="<%= project.source_url %>"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            View repository →
+          </a>
+        </article>
+      <% }) %>
+    <% } else { %>
+      <p class="text-slate-400">No projects synced yet. Use the admin dashboard to fetch your GitHub profile.</p>
+    <% } %>
+  </div>
+</section>

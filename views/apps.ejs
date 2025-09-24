@@ -1,0 +1,37 @@
+<section class="max-w-6xl mx-auto px-6 py-16">
+  <div class="max-w-3xl">
+    <h1 class="text-3xl font-semibold text-white">Apps & Games</h1>
+    <p class="text-slate-300 mt-2">Indie apps, experiments, and games built for fun and learning.</p>
+  </div>
+  <div class="mt-10 grid gap-6 md:grid-cols-2">
+    <% if (apps.length) { %>
+      <% apps.forEach((app) => { %>
+        <article class="bg-slate-900/40 border border-slate-800/60 rounded-2xl overflow-hidden flex flex-col">
+          <% if (app.image_url) { %>
+            <img src="<%= app.image_url %>" alt="<%= app.title %>" class="w-full h-48 object-cover" loading="lazy" />
+          <% } %>
+          <div class="p-6 space-y-3 flex-1">
+            <h2 class="text-xl font-semibold text-white"><%= app.title %></h2>
+            <% if (app.blurb) { %>
+              <p class="text-sm text-slate-300"><%= app.blurb %></p>
+            <% } else if (app.description) { %>
+              <p class="text-sm text-slate-300"><%= app.description %></p>
+            <% } %>
+            <div class="flex flex-wrap gap-2 text-xs text-slate-400">
+              <% if (app.tags) { %>
+                <% app.tags.split(',').forEach((tag) => { %>
+                  <span class="rounded-full bg-slate-800/80 px-3 py-1"><%= tag.trim() %></span>
+                <% }) %>
+              <% } %>
+            </div>
+          </div>
+          <a class="inline-flex items-center justify-between gap-2 px-6 py-4 border-t border-slate-800/60 text-sm font-semibold text-indigo-300 hover:text-white" href="<%= app.source_url %>" target="_blank" rel="noopener noreferrer">
+            Visit app →
+          </a>
+        </article>
+      <% }) %>
+    <% } else { %>
+      <p class="text-slate-400">No apps listed yet. Add them from the admin dashboard.</p>
+    <% } %>
+  </div>
+</section>

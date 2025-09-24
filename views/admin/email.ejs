@@ -1,0 +1,223 @@
+<section class="space-y-10">
+  <div class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+    <div>
+      <h1 class="text-3xl font-semibold text-white">Email center</h1>
+      <p class="text-slate-300 mt-2">Manage subscribers, imports, and campaigns.</p>
+    </div>
+    <% if (!mailgunConfigured) { %>
+      <span class="rounded-full bg-amber-500/20 px-4 py-2 text-sm text-amber-200">Mailgun not configured</span>
+    <% } %>
+  </div>
+
+  <div class="grid gap-6 md:grid-cols-3">
+    <div class="rounded-2xl border border-slate-900 bg-slate-950/60 p-6">
+      <p class="text-sm text-slate-400">Total subscribers</p>
+      <p class="mt-2 text-3xl font-semibold text-white"><%= subscriberCounts.total %></p>
+    </div>
+    <div class="rounded-2xl border border-slate-900 bg-slate-950/60 p-6">
+      <p class="text-sm text-slate-400">Active</p>
+      <p class="mt-2 text-3xl font-semibold text-white"><%= subscriberCounts.subscribed %></p>
+    </div>
+    <div class="rounded-2xl border border-slate-900 bg-slate-950/60 p-6">
+      <p class="text-sm text-slate-400">Unsubscribed</p>
+      <p class="mt-2 text-3xl font-semibold text-white"><%= subscriberCounts.unsubscribed %></p>
+    </div>
+  </div>
+
+  <div class="grid gap-6 md:grid-cols-2">
+    <div class="rounded-2xl border border-slate-900 bg-slate-950/60 p-6">
+      <h2 class="text-lg font-semibold text-white">Import subscribers</h2>
+      <p class="text-sm text-slate-300 mt-2">Upload a CSV export from Substack, Gumroad, or Stripe. Columns will be auto-detected.</p>
+      <form id="import-form" class="mt-4 space-y-4" enctype="multipart/form-data">
+        <div>
+          <label class="block text-sm text-slate-200">CSV file</label>
+          <input type="file" name="file" accept=".csv" required class="mt-1 w-full rounded-md border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-white" />
+        </div>
+        <div class="grid gap-3 md:grid-cols-2">
+          <div>
+            <label class="block text-sm text-slate-200">Source label</label>
+            <input name="source" placeholder="substack" class="mt-1 w-full rounded-md border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-white" />
+          </div>
+          <div>
+            <label class="block text-sm text-slate-200">Extra tags</label>
+            <input name="tags" placeholder="substack,2024" class="mt-1 w-full rounded-md border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-white" />
+          </div>
+        </div>
+        <button type="submit" class="inline-flex items-center gap-2 rounded-md bg-indigo-500 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-400">Run import</button>
+        <p id="import-feedback" class="text-sm"></p>
+      </form>
+    </div>
+
+    <div class="rounded-2xl border border-slate-900 bg-slate-950/60 p-6">
+      <h2 class="text-lg font-semibold text-white">Compose campaign</h2>
+      <form id="campaign-form" class="mt-4 space-y-4">
+        <div>
+          <label class="block text-sm text-slate-200">Internal name</label>
+          <input name="name" class="mt-1 w-full rounded-md border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-white" required />
+        </div>
+        <div>
+          <label class="block text-sm text-slate-200">Subject</label>
+          <input name="subject" class="mt-1 w-full rounded-md border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-white" required />
+        </div>
+        <div>
+          <label class="block text-sm text-slate-200">HTML body</label>
+          <textarea name="html_body" rows="6" class="mt-1 w-full rounded-md border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-white" required></textarea>
+        </div>
+        <div>
+          <label class="block text-sm text-slate-200">Text fallback</label>
+          <textarea name="text_body" rows="3" class="mt-1 w-full rounded-md border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-white"></textarea>
+        </div>
+        <button type="submit" class="inline-flex items-center gap-2 rounded-md bg-indigo-500 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-400">Save draft</button>
+        <p id="campaign-feedback" class="text-sm"></p>
+      </form>
+    </div>
+  </div>
+
+  <div class="rounded-2xl border border-slate-900 bg-slate-950/60 p-6">
+    <div class="flex items-center justify-between">
+      <h2 class="text-lg font-semibold text-white">Campaigns</h2>
+      <span class="text-xs text-slate-400">Send to matching subscribers below.</span>
+    </div>
+    <div class="mt-4 overflow-x-auto">
+      <table class="min-w-full divide-y divide-slate-900 text-sm">
+        <thead class="bg-slate-950/70 text-slate-300">
+          <tr>
+            <th class="px-4 py-3 text-left">Name</th>
+            <th class="px-4 py-3 text-left">Subject</th>
+            <th class="px-4 py-3">Status</th>
+            <th class="px-4 py-3 text-left">Created</th>
+            <th class="px-4 py-3 text-right">Send</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-900">
+          <% campaigns.forEach((campaign) => { %>
+            <tr>
+              <td class="px-4 py-3 text-slate-100"><%= campaign.name %></td>
+              <td class="px-4 py-3 text-slate-400"><%= campaign.subject %></td>
+              <td class="px-4 py-3 text-center text-slate-200"><%= campaign.status %></td>
+              <td class="px-4 py-3 text-slate-400"><%= dayjs(campaign.created_at).format('MMM D, YYYY') %></td>
+              <td class="px-4 py-3 text-right">
+                <form class="send-campaign-form inline-grid gap-2 text-xs" data-id="<%= campaign.id %>">
+                  <input type="hidden" name="campaign_id" value="<%= campaign.id %>" />
+                  <input name="tag_include" placeholder="tag include" class="rounded-md border border-slate-800 bg-slate-950 px-2 py-1 text-slate-200" />
+                  <input name="tag_exclude" placeholder="tag exclude" class="rounded-md border border-slate-800 bg-slate-950 px-2 py-1 text-slate-200" />
+                  <button type="submit" class="rounded-md bg-emerald-500 px-3 py-1 font-semibold text-white hover:bg-emerald-400">Send</button>
+                  <span class="send-feedback text-xs"></span>
+                </form>
+              </td>
+            </tr>
+          <% }) %>
+          <% if (!campaigns.length) { %>
+            <tr>
+              <td colspan="5" class="px-4 py-8 text-center text-slate-400">No campaigns yet. Save a draft above.</td>
+            </tr>
+          <% } %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<script>
+  const importForm = document.getElementById('import-form');
+  if (importForm) {
+    importForm.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const feedback = document.getElementById('import-feedback');
+      feedback.textContent = '';
+      feedback.className = 'text-sm';
+      const formData = new FormData(importForm);
+      try {
+        const response = await fetch('/admin/import/subscribers', {
+          method: 'POST',
+          body: formData,
+          credentials: 'same-origin',
+          headers: {
+            'X-CSRF-Token': window.csrfToken || ''
+          },
+        });
+        const data = await response.json();
+        if (response.ok) {
+          feedback.textContent = `Imported ${data.result.inserted} new and ${data.result.updated} updated contacts.`;
+          feedback.className = 'text-sm text-emerald-300';
+          importForm.reset();
+        } else {
+          feedback.textContent = data.error || 'Import failed.';
+          feedback.className = 'text-sm text-rose-300';
+        }
+      } catch (error) {
+        feedback.textContent = 'Network error. Try again.';
+        feedback.className = 'text-sm text-rose-300';
+      }
+    });
+  }
+
+  const campaignForm = document.getElementById('campaign-form');
+  if (campaignForm) {
+    campaignForm.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const feedback = document.getElementById('campaign-feedback');
+      feedback.textContent = '';
+      feedback.className = 'text-sm';
+      const formData = new FormData(campaignForm);
+      const payload = Object.fromEntries(formData.entries());
+      try {
+        const response = await fetch('/admin/campaigns', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-Token': window.csrfToken || ''
+          },
+          credentials: 'same-origin',
+          body: JSON.stringify(payload),
+        });
+        const data = await response.json();
+        if (response.ok) {
+          feedback.textContent = 'Draft saved. Refresh to manage it.';
+          feedback.className = 'text-sm text-emerald-300';
+          campaignForm.reset();
+        } else {
+          feedback.textContent = data.error || 'Unable to save campaign.';
+          feedback.className = 'text-sm text-rose-300';
+        }
+      } catch (error) {
+        feedback.textContent = 'Network error. Try again.';
+        feedback.className = 'text-sm text-rose-300';
+      }
+    });
+  }
+
+  document.querySelectorAll('.send-campaign-form').forEach((form) => {
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const feedback = form.querySelector('.send-feedback');
+      feedback.textContent = 'Sending...';
+      feedback.className = 'send-feedback text-xs text-slate-300';
+      const formData = new FormData(form);
+      const payload = Object.fromEntries(formData.entries());
+      const id = form.dataset.id;
+      try {
+        const response = await fetch(`/admin/campaigns/${id}/send`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-Token': window.csrfToken || ''
+          },
+          credentials: 'same-origin',
+          body: JSON.stringify(payload),
+        });
+        const data = await response.json();
+        if (response.ok) {
+          feedback.textContent = `Sent to ${data.sent} subscribers.`;
+          feedback.className = 'send-feedback text-xs text-emerald-300';
+        } else {
+          feedback.textContent = data.error || 'Send failed.';
+          feedback.className = 'send-feedback text-xs text-rose-300';
+        }
+      } catch (error) {
+        feedback.textContent = 'Network error.';
+        feedback.className = 'send-feedback text-xs text-rose-300';
+      }
+    });
+  });
+</script>

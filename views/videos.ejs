@@ -1,0 +1,30 @@
+<section class="max-w-6xl mx-auto px-6 py-16">
+  <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+    <div>
+      <h1 class="text-3xl font-semibold text-white">Videos</h1>
+      <p class="text-slate-300 mt-2">Long-form breakdowns, livestreams, and shorts.</p>
+    </div>
+    <a class="text-sm text-indigo-300 hover:text-white" href="https://youtube.com/@louiebacaj" target="_blank" rel="noopener noreferrer">YouTube channel →</a>
+  </div>
+  <div class="mt-10 grid gap-10">
+    <% if (videos.length) { %>
+      <% videos.forEach((video) => { %>
+        <article class="grid gap-6 lg:grid-cols-[1.2fr_0.8fr] lg:items-center">
+          <div class="bg-slate-900/40 border border-slate-800/60 rounded-2xl overflow-hidden">
+            <%- video.embed_html || '' %>
+          </div>
+          <div class="space-y-4">
+            <h2 class="text-2xl font-semibold text-white"><%= video.title %></h2>
+            <p class="text-sm text-slate-300"><%= video.blurb || video.description %></p>
+            <div class="text-xs text-slate-400">Published <%= video.published_at ? dayjs(video.published_at).format('MMMM D, YYYY') : 'recently' %></div>
+            <a class="inline-flex items-center text-sm font-semibold text-indigo-300 hover:text-white" href="<%= video.source_url %>" target="_blank" rel="noopener noreferrer">
+              Watch on YouTube →
+            </a>
+          </div>
+        </article>
+      <% }) %>
+    <% } else { %>
+      <p class="text-slate-400">No videos imported yet. Fetch the YouTube feed from the admin dashboard.</p>
+    <% } %>
+  </div>
+</section>

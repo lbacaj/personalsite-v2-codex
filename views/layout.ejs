@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <% const siteTitle = (site && site.title) || 'Louie Bacaj'; %>
+    <% const pageTitle = typeof title !== 'undefined' && title ? `${title} · ${siteTitle}` : siteTitle; %>
+    <% const descriptionFallback = (site && site.description) || 'Software engineer turned entrepreneur sharing lessons from the journey.'; %>
+    <% const pageDescription = typeof metaDescription !== 'undefined' && metaDescription ? metaDescription : descriptionFallback; %>
+    <title><%= pageTitle %></title>
+    <meta name="description" content="<%= pageDescription %>" />
+    <link rel="icon" type="image/png" href="/images/legacy/favicon.png" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['Inter', 'ui-sans-serif', 'system-ui'],
+            },
+            colors: {
+              accent: '#f6c177',
+            },
+          },
+        },
+      };
+    </script>
+  </head>
+  <body class="bg-slate-950 text-slate-100">
+    <div class="min-h-screen flex flex-col">
+      <header class="border-b border-slate-800/60">
+        <div class="max-w-6xl mx-auto px-6 py-6 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+          <a href="/" class="text-xl font-semibold tracking-tight text-white">Louie Bacaj</a>
+          <nav class="flex flex-wrap items-center gap-4 text-sm text-slate-300">
+            <a class="hover:text-white transition" href="/about">About</a>
+            <a class="hover:text-white transition" href="/projects">Projects</a>
+            <a class="hover:text-white transition" href="/newsletter">Newsletter</a>
+            <a class="hover:text-white transition" href="/features">Features</a>
+          </nav>
+        </div>
+      </header>
+      <main class="flex-1">
+        <%- body %>
+      </main>
+      <footer class="border-t border-slate-800/60">
+        <div class="max-w-6xl mx-auto px-6 py-10 space-y-3 text-sm text-slate-400">
+          <p>&copy; <%= currentYear || new Date().getFullYear() %> Louie Bacaj. Thanks for stopping by.</p>
+          <p>Say hello any time: <a class="text-amber-200 hover:text-white" href="mailto:louie@louiebacaj.com">louie@louiebacaj.com</a></p>
+        </div>
+      </footer>
+    </div>
+    <script>
+      (function () {
+        function track(event, payload = {}) {
+          try {
+            fetch('/api/track', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ event, ...payload }),
+            });
+          } catch (err) {
+            /* swallow analytics errors */
+          }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+          const params = new URLSearchParams(window.location.search);
+          const utm = {};
+          ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term'].forEach((key) => {
+            if (params.has(key)) {
+              utm[key] = params.get(key);
+            }
+          });
+
+          track('pageview', {
+            path: window.location.pathname,
+            referer: document.referrer || null,
+            ...utm,
+          });
+
+          document.querySelectorAll('a[data-track]').forEach((anchor) => {
+            anchor.addEventListener('click', () => {
+              track('click', {
+                path: window.location.pathname,
+                referer: document.referrer || null,
+                target: anchor.getAttribute('href'),
+                label: anchor.dataset.track,
+              });
+            });
+          });
+        });
+      })();
+    </script>
+  </body>
+</html>

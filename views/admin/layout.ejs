@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title><%= title ? `${title} · Admin · Personal Hub` : 'Admin · Personal Hub' %></title>
+    <link rel="icon" type="image/png" href="/images/legacy/favicon.png" />
+    <meta name="csrf-token" content="<%= csrfToken || '' %>" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['Inter', 'ui-sans-serif', 'system-ui'],
+            },
+          },
+        },
+      };
+    </script>
+    <script>
+      window.csrfToken = '<%= csrfToken || '' %>';
+    </script>
+  </head>
+  <body class="bg-slate-950 text-slate-100">
+    <div class="min-h-screen flex">
+      <aside class="hidden md:flex md:w-64 flex-col border-r border-slate-900 bg-slate-950/80">
+        <div class="px-6 py-6 border-b border-slate-900">
+          <a href="/admin" class="text-lg font-semibold tracking-tight text-white">Personal Hub Admin</a>
+        </div>
+        <nav class="flex-1 px-4 py-6 space-y-2 text-sm text-slate-300">
+          <a class="block rounded-md px-3 py-2 hover:bg-slate-900" href="/admin">Dashboard</a>
+          <a class="block rounded-md px-3 py-2 hover:bg-slate-900" href="/admin/items">Content</a>
+          <a class="block rounded-md px-3 py-2 hover:bg-slate-900" href="/admin/email">Email</a>
+          <a class="block rounded-md px-3 py-2 hover:bg-slate-900" href="/admin/giveaways">Giveaways</a>
+          <a class="block rounded-md px-3 py-2 hover:bg-slate-900" href="/admin/settings">Settings</a>
+        </nav>
+        <form class="px-6 py-6 border-t border-slate-900" method="post" action="/admin/logout">
+          <input type="hidden" name="_csrf" value="<%= csrfToken || '' %>" />
+          <button class="w-full inline-flex items-center justify-center rounded-md border border-slate-800 px-3 py-2 text-sm font-semibold text-slate-200 hover:bg-slate-900" type="submit">Log out</button>
+        </form>
+      </aside>
+      <div class="flex-1 flex flex-col">
+        <header class="md:hidden border-b border-slate-900 px-4 py-4">
+          <div class="flex items-center justify-between">
+            <span class="text-lg font-semibold">Admin</span>
+            <form method="post" action="/admin/logout">
+              <input type="hidden" name="_csrf" value="<%= csrfToken || '' %>" />
+              <button type="submit" class="text-sm text-indigo-300">Logout</button>
+            </form>
+          </div>
+        </header>
+        <main class="flex-1 overflow-y-auto">
+          <div class="max-w-6xl mx-auto px-6 py-10">
+            <%- body %>
+          </div>
+        </main>
+      </div>
+    </div>
+  </body>
+</html>

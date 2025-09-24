@@ -1,0 +1,111 @@
+<section class="space-y-10">
+  <div>
+    <h1 class="text-3xl font-semibold text-white">Dashboard</h1>
+    <p class="text-slate-300 mt-2">Overview of visitors, subscribers, and campaign activity.</p>
+  </div>
+
+  <div class="grid gap-6 md:grid-cols-3">
+    <div class="rounded-2xl border border-slate-900 bg-slate-950/60 p-6">
+      <p class="text-sm text-slate-400">Visitors (7d)</p>
+      <p class="mt-2 text-3xl font-semibold text-white"><%= analytics.totals.visitors %></p>
+    </div>
+    <div class="rounded-2xl border border-slate-900 bg-slate-950/60 p-6">
+      <p class="text-sm text-slate-400">Subscribers</p>
+      <p class="mt-2 text-3xl font-semibold text-white"><%= analytics.totals.subscribers %></p>
+    </div>
+    <div class="rounded-2xl border border-slate-900 bg-slate-950/60 p-6">
+      <p class="text-sm text-slate-400">Unsubscribed</p>
+      <p class="mt-2 text-3xl font-semibold text-white"><%= analytics.totals.unsubscribed %></p>
+    </div>
+  </div>
+
+  <div class="rounded-2xl border border-slate-900 bg-slate-950/60 p-6">
+    <p class="text-sm font-semibold text-indigo-300">Visitors last 7 days</p>
+    <div class="mt-4 grid gap-3 md:grid-cols-7">
+      <% analytics.sparkline.forEach((point) => { %>
+        <div class="flex flex-col items-center gap-2">
+          <div class="w-full h-24 rounded-md bg-slate-900 flex items-end justify-center">
+            <div
+              class="w-4 rounded-md bg-indigo-500"
+              style="height: <%= Math.min(Math.max(point.count, 1) * 6, 96) %>px"
+            ></div>
+          </div>
+          <span class="text-xs text-slate-400"><%= dayjs(point.day).format('ddd') %></span>
+        </div>
+      <% }) %>
+    </div>
+  </div>
+
+  <div class="grid gap-6 md:grid-cols-2">
+    <div class="rounded-2xl border border-slate-900 bg-slate-950/60 p-6">
+      <h2 class="text-lg font-semibold text-white">Top pages (7d)</h2>
+      <ul class="mt-4 space-y-2 text-sm">
+        <% analytics.topPages.forEach((page) => { %>
+          <li class="flex items-center justify-between border-b border-slate-900 pb-2">
+            <span class="text-slate-200"><%= page.path %></span>
+            <span class="text-slate-400"><%= page.count %></span>
+          </li>
+        <% }) %>
+        <% if (!analytics.topPages.length) { %>
+          <li class="text-slate-400">No data yet.</li>
+        <% } %>
+      </ul>
+    </div>
+    <div class="rounded-2xl border border-slate-900 bg-slate-950/60 p-6">
+      <h2 class="text-lg font-semibold text-white">UTM sources (7d)</h2>
+      <ul class="mt-4 space-y-2 text-sm">
+        <% analytics.utmBreakdown.forEach((utm) => { %>
+          <li class="flex items-center justify-between border-b border-slate-900 pb-2">
+            <span class="text-slate-200"><%= utm.source %></span>
+            <span class="text-slate-400"><%= utm.count %></span>
+          </li>
+        <% }) %>
+        <% if (!analytics.utmBreakdown.length) { %>
+          <li class="text-slate-400">No data yet.</li>
+        <% } %>
+      </ul>
+    </div>
+  </div>
+
+  <div class="grid gap-6 md:grid-cols-2">
+    <div class="rounded-2xl border border-slate-900 bg-slate-950/60 p-6">
+      <div class="flex items-center justify-between">
+        <h2 class="text-lg font-semibold text-white">Recent subscribers</h2>
+        <a class="text-sm text-indigo-300" href="/admin/email">Manage list →</a>
+      </div>
+      <ul class="mt-4 space-y-3 text-sm">
+        <% recentSubscribers.forEach((subscriber) => { %>
+          <li class="border-b border-slate-900 pb-3">
+            <p class="text-slate-200"><%= subscriber.email %></p>
+            <p class="text-xs text-slate-400">
+              <%= subscriber.source || 'site' %> · <%= dayjs(subscriber.created_at).format('MMM D, YYYY') %>
+            </p>
+          </li>
+        <% }) %>
+        <% if (!recentSubscribers.length) { %>
+          <li class="text-slate-400">No subscribers yet.</li>
+        <% } %>
+      </ul>
+    </div>
+    <div class="rounded-2xl border border-slate-900 bg-slate-950/60 p-6">
+      <div class="flex items-center justify-between">
+        <h2 class="text-lg font-semibold text-white">Campaigns</h2>
+        <a class="text-sm text-indigo-300" href="/admin/email">Compose →</a>
+      </div>
+      <ul class="mt-4 space-y-3 text-sm">
+        <% campaigns.forEach((campaign) => { %>
+          <li class="border-b border-slate-900 pb-3">
+            <p class="text-slate-200"><%= campaign.name %></p>
+            <p class="text-xs text-slate-400">Status: <%= campaign.status %> · Created <%= dayjs(campaign.created_at).format('MMM D') %></p>
+          </li>
+        <% }) %>
+        <% if (!campaigns.length) { %>
+          <li class="text-slate-400">No campaigns yet.</li>
+        <% } %>
+      </ul>
+      <% if (!mailgunConfigured) { %>
+        <p class="mt-4 text-xs text-amber-300">Mailgun is not configured. Set credentials in Settings before sending.</p>
+      <% } %>
+    </div>
+  </div>
+</section>

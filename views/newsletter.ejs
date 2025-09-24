@@ -1,0 +1,29 @@
+<section class="max-w-6xl mx-auto px-6 py-16">
+  <div class="max-w-3xl">
+    <h1 class="text-3xl font-semibold text-white">Newsletter</h1>
+    <p class="text-slate-300 mt-2">Read the latest essays and updates. Subscribe below to get new issues first.</p>
+  </div>
+  <div class="mt-10 space-y-10">
+    <% if (posts.length) { %>
+      <% posts.forEach((post) => { %>
+        <article class="bg-slate-900/40 border border-slate-800/60 rounded-2xl p-6">
+          <div class="flex flex-col gap-4 md:flex-row md:items-start md:gap-6">
+            <% if (post.image_url) { %>
+              <img src="<%= post.image_url %>" alt="<%= post.title %>" class="w-full md:w-48 rounded-xl object-cover border border-slate-800/70" loading="lazy" />
+            <% } %>
+            <div class="space-y-3">
+              <h2 class="text-2xl font-semibold text-white"><%= post.title %></h2>
+              <p class="text-xs text-slate-400">Published <%= post.published_at ? dayjs(post.published_at).format('MMMM D, YYYY') : '' %></p>
+              <p class="text-sm text-slate-300 leading-relaxed"><%= post.blurb || post.description %></p>
+              <a class="inline-flex items-center text-sm font-semibold text-indigo-300 hover:text-white" href="<%= post.source_url %>" target="_blank" rel="noopener noreferrer">
+                Read on Substack →
+              </a>
+            </div>
+          </div>
+        </article>
+      <% }) %>
+    <% } else { %>
+      <p class="text-slate-400">No newsletter posts yet. Fetch your Substack feed from the admin dashboard.</p>
+    <% } %>
+  </div>
+</section>

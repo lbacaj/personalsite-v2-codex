@@ -1,0 +1,252 @@
+<section class="space-y-10">
+  <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+    <div>
+      <h1 class="text-3xl font-semibold text-white">Content library</h1>
+      <p class="text-slate-300 mt-2">Manage imported and manual content across the site.</p>
+    </div>
+    <form class="flex items-center gap-3" method="get" action="/admin/items">
+      <label class="text-sm text-slate-300" for="type">Type</label>
+      <select
+        id="type"
+        name="type"
+        class="rounded-md border border-slate-800 bg-slate-900 px-3 py-2 text-sm text-white focus:border-indigo-400 focus:outline-none"
+        onchange="this.form.submit()"
+      >
+        <% itemTypes.forEach((kind) => { %>
+          <option value="<%= kind %>" <%= kind === type ? 'selected' : '' %>><%= kind %></option>
+        <% }) %>
+      </select>
+    </form>
+  </div>
+
+  <details class="rounded-2xl border border-slate-900 bg-slate-950/60 p-6">
+    <summary class="cursor-pointer text-sm font-semibold text-indigo-300">Add new <%= type %> item</summary>
+    <form id="create-item-form" class="mt-6 grid gap-4 md:grid-cols-2" data-type="<%= type %>">
+      <input type="hidden" name="type" value="<%= type %>" />
+      <div class="md:col-span-2">
+        <label class="block text-sm text-slate-200">Title</label>
+        <input name="title" class="mt-1 w-full rounded-md border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-white" required />
+      </div>
+      <div class="md:col-span-2">
+        <label class="block text-sm text-slate-200">Source URL</label>
+        <input name="source_url" class="mt-1 w-full rounded-md border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-white" required />
+      </div>
+      <div>
+        <label class="block text-sm text-slate-200">Image URL</label>
+        <input name="image_url" class="mt-1 w-full rounded-md border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-white" />
+      </div>
+      <div>
+        <label class="block text-sm text-slate-200">Tags (comma separated)</label>
+        <input name="tags" class="mt-1 w-full rounded-md border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-white" />
+      </div>
+      <div class="md:col-span-2">
+        <label class="block text-sm text-slate-200">Description</label>
+        <textarea name="description" rows="3" class="mt-1 w-full rounded-md border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-white"></textarea>
+      </div>
+      <div class="md:col-span-2 flex items-center gap-4">
+        <label class="inline-flex items-center gap-2 text-sm text-slate-200">
+          <input type="checkbox" name="featured" value="true" class="rounded border-slate-700 bg-slate-950" />
+          Featured
+        </label>
+        <label class="inline-flex items-center gap-2 text-sm text-slate-200">
+          <input type="checkbox" name="visible" value="true" checked class="rounded border-slate-700 bg-slate-950" />
+          Visible
+        </label>
+      </div>
+      <div class="md:col-span-2">
+        <button type="submit" class="inline-flex items-center gap-2 rounded-md bg-indigo-500 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-400">Create item</button>
+        <span id="create-item-feedback" class="ml-4 text-sm"></span>
+      </div>
+    </form>
+  </details>
+
+  <div class="overflow-x-auto rounded-2xl border border-slate-900">
+    <table class="min-w-full divide-y divide-slate-900 text-sm">
+      <thead class="bg-slate-950/70 text-slate-300">
+        <tr>
+          <th class="px-4 py-3 text-left">Title</th>
+          <th class="px-4 py-3 text-left">URL</th>
+          <th class="px-4 py-3">Featured</th>
+          <th class="px-4 py-3">Visible</th>
+          <th class="px-4 py-3">Updated</th>
+          <th class="px-4 py-3 text-right">Actions</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-slate-900">
+        <% items.forEach((item) => { %>
+          <tr>
+            <td class="px-4 py-3 text-slate-100"><%= item.title %></td>
+            <td class="px-4 py-3 text-slate-400 truncate max-w-xs">
+              <a class="text-indigo-300 hover:text-white" href="<%= item.source_url %>" target="_blank" rel="noopener noreferrer"><%= item.source_url %></a>
+            </td>
+            <td class="px-4 py-3 text-center">
+              <form method="post" action="/admin/items/<%= item.id %>/feature" class="inline feature-form" data-id="<%= item.id %>">
+                <input type="hidden" name="featured" value="<%= item.featured ? 'false' : 'true' %>" />
+                <button class="rounded-md border border-slate-800 px-3 py-1 text-xs text-slate-200 hover:border-indigo-400" type="submit">
+                  <%= item.featured ? 'Unset' : 'Set' %>
+                </button>
+              </form>
+            </td>
+            <td class="px-4 py-3 text-center">
+              <form method="post" action="/admin/items/<%= item.id %>/visibility" class="inline visibility-form" data-id="<%= item.id %>">
+                <input type="hidden" name="visible" value="<%= item.visible ? 'false' : 'true' %>" />
+                <button class="rounded-md border border-slate-800 px-3 py-1 text-xs text-slate-200 hover:border-indigo-400" type="submit">
+                  <%= item.visible ? 'Hide' : 'Show' %>
+                </button>
+              </form>
+            </td>
+            <td class="px-4 py-3 text-slate-400"><%= item.updated_at ? dayjs(item.updated_at).format('MMM D, YYYY') : '' %></td>
+            <td class="px-4 py-3 text-right space-x-2">
+              <form method="post" action="/admin/items/<%= item.id %>/resummarize" class="inline resummarize-form" data-id="<%= item.id %>">
+                <button class="rounded-md border border-slate-800 px-3 py-1 text-xs text-slate-200 hover:border-indigo-400" type="submit">Re-summarize</button>
+              </form>
+              <form method="post" action="/admin/items/<%= item.id %>?_method=delete" data-method="delete" class="inline delete-item-form">
+                <button class="rounded-md border border-rose-800 px-3 py-1 text-xs text-rose-300 hover:border-rose-500" type="submit">Delete</button>
+              </form>
+            </td>
+          </tr>
+        <% }) %>
+        <% if (!items.length) { %>
+          <tr>
+            <td colspan="6" class="px-4 py-8 text-center text-slate-400">No items found. Fetch integrations or add one above.</td>
+          </tr>
+        <% } %>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<script>
+  const createItemForm = document.getElementById('create-item-form');
+  if (createItemForm) {
+    createItemForm.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const feedback = document.getElementById('create-item-feedback');
+      feedback.textContent = '';
+      feedback.className = 'text-sm';
+      const formData = new FormData(createItemForm);
+      const payload = Object.fromEntries(formData.entries());
+      try {
+        const response = await fetch('/admin/items', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-Token': window.csrfToken || ''
+          },
+          credentials: 'same-origin',
+          body: JSON.stringify(payload),
+        });
+        if (response.ok) {
+          feedback.textContent = 'Item created. Refresh to see it in the list.';
+          feedback.className = 'text-sm text-emerald-300';
+          createItemForm.reset();
+        } else {
+          const error = await response.json();
+          feedback.textContent = error.error || 'Unable to create item.';
+          feedback.className = 'text-sm text-rose-300';
+        }
+      } catch (error) {
+        feedback.textContent = 'Network error. Try again.';
+        feedback.className = 'text-sm text-rose-300';
+      }
+    });
+  }
+
+  document.querySelectorAll('.delete-item-form').forEach((form) => {
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      if (!confirm('Delete this item?')) return;
+      const response = await fetch(form.action.replace('?_method=delete', ''), {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-Token': window.csrfToken || ''
+        },
+        credentials: 'same-origin',
+      });
+      if (response.ok) {
+        window.location.reload();
+      } else {
+        alert('Unable to delete item.');
+      }
+    });
+  });
+
+  document.querySelectorAll('.resummarize-form').forEach((form) => {
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const id = form.dataset.id;
+      try {
+        const response = await fetch(`/admin/items/${id}/resummarize`, {
+          method: 'POST',
+          headers: {
+            'X-CSRF-Token': window.csrfToken || ''
+          },
+          credentials: 'same-origin',
+        });
+        const data = await response.json();
+        if (response.ok) {
+          alert('Summary updated.');
+        } else {
+          alert(data.error || 'Unable to summarize.');
+        }
+      } catch (error) {
+        alert('Network error.');
+      }
+    });
+  });
+
+  document.querySelectorAll('.feature-form').forEach((form) => {
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const formData = new FormData(form);
+      const id = form.dataset.id;
+      try {
+        const response = await fetch(`/admin/items/${id}/feature`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-Token': window.csrfToken || ''
+          },
+          credentials: 'same-origin',
+          body: JSON.stringify(Object.fromEntries(formData.entries())),
+        });
+        if (response.ok) {
+          window.location.reload();
+        } else {
+          const data = await response.json();
+          alert(data.error || 'Unable to update feature state.');
+        }
+      } catch (error) {
+        alert('Network error.');
+      }
+    });
+  });
+
+  document.querySelectorAll('.visibility-form').forEach((form) => {
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const formData = new FormData(form);
+      const id = form.dataset.id;
+      try {
+        const response = await fetch(`/admin/items/${id}/visibility`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-Token': window.csrfToken || ''
+          },
+          credentials: 'same-origin',
+          body: JSON.stringify(Object.fromEntries(formData.entries())),
+        });
+        if (response.ok) {
+          window.location.reload();
+        } else {
+          const data = await response.json();
+          alert(data.error || 'Unable to toggle visibility.');
+        }
+      } catch (error) {
+        alert('Network error.');
+      }
+    });
+  });
+</script>

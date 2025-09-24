@@ -1,0 +1,234 @@
+<section class="space-y-10">
+  <div>
+    <h1 class="text-3xl font-semibold text-white">Giveaways</h1>
+    <p class="text-slate-300 mt-2">Create giveaways, add entries, and draw winners.</p>
+  </div>
+
+  <details class="rounded-2xl border border-slate-900 bg-slate-950/60 p-6">
+    <summary class="cursor-pointer text-sm font-semibold text-indigo-300">Create giveaway</summary>
+    <form id="giveaway-form" class="mt-6 grid gap-4 md:grid-cols-2">
+      <div class="md:col-span-2">
+        <label class="block text-sm text-slate-200">Name</label>
+        <input name="name" class="mt-1 w-full rounded-md border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-white" required />
+      </div>
+      <div class="md:col-span-2">
+        <label class="block text-sm text-slate-200">Description</label>
+        <textarea name="description" rows="3" class="mt-1 w-full rounded-md border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-white"></textarea>
+      </div>
+      <div>
+        <label class="block text-sm text-slate-200">Start date</label>
+        <input type="date" name="start_date" class="mt-1 w-full rounded-md border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-white" />
+      </div>
+      <div>
+        <label class="block text-sm text-slate-200">End date</label>
+        <input type="date" name="end_date" class="mt-1 w-full rounded-md border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-white" />
+      </div>
+      <div class="md:col-span-2">
+        <label class="block text-sm text-slate-200">Rules</label>
+        <textarea name="rules" rows="2" class="mt-1 w-full rounded-md border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-white"></textarea>
+      </div>
+      <div class="md:col-span-2">
+        <button type="submit" class="inline-flex items-center gap-2 rounded-md bg-indigo-500 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-400">Create giveaway</button>
+        <span id="giveaway-feedback" class="ml-4 text-sm"></span>
+      </div>
+    </form>
+  </details>
+
+  <div class="grid gap-6 md:grid-cols-2">
+    <% giveaways.forEach((giveaway) => { %>
+      <article class="rounded-2xl border border-slate-900 bg-slate-950/60 p-6 space-y-4">
+        <header>
+          <h2 class="text-xl font-semibold text-white"><%= giveaway.name %></h2>
+          <p class="text-sm text-slate-300"><%= giveaway.description || 'No description provided.' %></p>
+          <p class="mt-2 text-xs text-slate-400">
+            <%= giveaway.start_date ? 'Start: ' + dayjs(giveaway.start_date).format('MMM D, YYYY') : '' %>
+            <% if (giveaway.end_date) { %>
+              · End: <%= dayjs(giveaway.end_date).format('MMM D, YYYY') %>
+            <% } %>
+          </p>
+        </header>
+
+        <div class="space-y-3 text-sm">
+          <form class="entry-form grid gap-2 md:grid-cols-[1fr_auto]" data-id="<%= giveaway.id %>">
+            <input name="email" type="email" placeholder="subscriber@example.com" class="rounded-md border border-slate-800 bg-slate-950 px-3 py-2 text-slate-200" required />
+            <input name="source" placeholder="entry source" class="rounded-md border border-slate-800 bg-slate-950 px-3 py-2 text-slate-200" />
+            <button type="submit" class="md:col-span-2 inline-flex items-center justify-center rounded-md bg-indigo-500 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-400">Add entry</button>
+            <span class="entry-feedback text-xs text-slate-300"></span>
+          </form>
+
+          <form class="draw-form" data-id="<%= giveaway.id %>">
+            <button type="submit" class="inline-flex items-center gap-2 rounded-md bg-emerald-500 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-400">Pick random winner</button>
+            <% if (giveaway.winner_subscriber_id) { %>
+              <span class="ml-3 text-xs text-emerald-300">Winner selected (subscriber ID <%= giveaway.winner_subscriber_id %>)</span>
+            <% } %>
+          </form>
+
+          <form class="fulfill-form" data-id="<%= giveaway.id %>">
+            <input name="notes" placeholder="Fulfillment notes" class="mt-2 w-full rounded-md border border-slate-800 bg-slate-950 px-3 py-2 text-slate-200" />
+            <button type="submit" class="mt-2 inline-flex items-center gap-2 rounded-md border border-slate-800 px-4 py-2 text-sm font-semibold text-slate-200 hover:border-indigo-400">Mark fulfilled</button>
+            <% if (giveaway.fulfilled_at) { %>
+              <span class="ml-3 text-xs text-emerald-300">Fulfilled <%= dayjs(giveaway.fulfilled_at).format('MMM D, YYYY') %></span>
+            <% } %>
+          </form>
+        </div>
+      </article>
+    <% }) %>
+    <% if (!giveaways.length) { %>
+      <p class="rounded-2xl border border-slate-900 bg-slate-950/60 p-6 text-slate-400">No giveaways yet. Create one above.</p>
+    <% } %>
+  </div>
+
+  <div class="rounded-2xl border border-slate-900 bg-slate-950/60 p-6">
+    <h2 class="text-lg font-semibold text-white">Recent entries</h2>
+    <table class="mt-4 min-w-full divide-y divide-slate-900 text-sm">
+      <thead class="bg-slate-950/70 text-slate-300">
+        <tr>
+          <th class="px-4 py-3 text-left">Giveaway ID</th>
+          <th class="px-4 py-3 text-left">Email</th>
+          <th class="px-4 py-3 text-left">Source</th>
+          <th class="px-4 py-3 text-left">Created</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-slate-900">
+        <% latestEntries.forEach((entry) => { %>
+          <tr>
+            <td class="px-4 py-3 text-slate-200"><%= entry.giveaway_id %></td>
+            <td class="px-4 py-3 text-slate-300"><%= entry.email %></td>
+            <td class="px-4 py-3 text-slate-400"><%= entry.source || 'n/a' %></td>
+            <td class="px-4 py-3 text-slate-400"><%= dayjs(entry.created_at).format('MMM D, YYYY') %></td>
+          </tr>
+        <% }) %>
+        <% if (!latestEntries.length) { %>
+          <tr>
+            <td colspan="4" class="px-4 py-6 text-center text-slate-400">No entries yet.</td>
+          </tr>
+        <% } %>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<script>
+  const giveawayForm = document.getElementById('giveaway-form');
+  if (giveawayForm) {
+    giveawayForm.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const feedback = document.getElementById('giveaway-feedback');
+      feedback.textContent = '';
+      feedback.className = 'text-sm';
+      const formData = new FormData(giveawayForm);
+      const payload = Object.fromEntries(formData.entries());
+      try {
+        const response = await fetch('/admin/giveaways', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-Token': window.csrfToken || ''
+          },
+          credentials: 'same-origin',
+          body: JSON.stringify(payload),
+        });
+        const data = await response.json();
+        if (response.ok) {
+          feedback.textContent = 'Giveaway created. Refresh to manage entries.';
+          feedback.className = 'text-sm text-emerald-300';
+          giveawayForm.reset();
+        } else {
+          feedback.textContent = data.error || 'Unable to create giveaway.';
+          feedback.className = 'text-sm text-rose-300';
+        }
+      } catch (error) {
+        feedback.textContent = 'Network error.';
+        feedback.className = 'text-sm text-rose-300';
+      }
+    });
+  }
+
+  document.querySelectorAll('.entry-form').forEach((form) => {
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const feedback = form.querySelector('.entry-feedback');
+      feedback.textContent = '';
+      const formData = new FormData(form);
+      const payload = Object.fromEntries(formData.entries());
+      const id = form.dataset.id;
+      try {
+        const response = await fetch(`/admin/giveaways/${id}/entries`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-Token': window.csrfToken || ''
+          },
+          credentials: 'same-origin',
+          body: JSON.stringify(payload),
+        });
+        const data = await response.json();
+        if (response.ok) {
+          feedback.textContent = 'Entry added.';
+          feedback.className = 'entry-feedback text-xs text-emerald-300';
+          form.reset();
+        } else {
+          feedback.textContent = data.error || 'Unable to add entry.';
+          feedback.className = 'entry-feedback text-xs text-rose-300';
+        }
+      } catch (error) {
+        feedback.textContent = 'Network error.';
+        feedback.className = 'entry-feedback text-xs text-rose-300';
+      }
+    });
+  });
+
+  document.querySelectorAll('.draw-form').forEach((form) => {
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const id = form.dataset.id;
+      try {
+        const response = await fetch(`/admin/giveaways/${id}/draw`, {
+          method: 'POST',
+          headers: {
+            'X-CSRF-Token': window.csrfToken || ''
+          },
+          credentials: 'same-origin',
+        });
+        const data = await response.json();
+        if (response.ok) {
+          alert(`Winner: ${data.winner.email}`);
+          window.location.reload();
+        } else {
+          alert(data.error || 'Unable to draw winner.');
+        }
+      } catch (error) {
+        alert('Network error.');
+      }
+    });
+  });
+
+  document.querySelectorAll('.fulfill-form').forEach((form) => {
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const id = form.dataset.id;
+      const formData = new FormData(form);
+      const payload = Object.fromEntries(formData.entries());
+      try {
+        const response = await fetch(`/admin/giveaways/${id}/fulfill`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-Token': window.csrfToken || ''
+          },
+          credentials: 'same-origin',
+          body: JSON.stringify(payload),
+        });
+        const data = await response.json();
+        if (response.ok) {
+          alert('Marked as fulfilled.');
+          window.location.reload();
+        } else {
+          alert(data.error || 'Unable to update giveaway.');
+        }
+      } catch (error) {
+        alert('Network error.');
+      }
+    });
+  });
+</script>

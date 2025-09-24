@@ -1,0 +1,49 @@
+<section class="max-w-xl mx-auto px-6 py-24">
+  <% if (invalid) { %>
+    <p class="text-sm uppercase tracking-[0.3em] text-rose-300">Unsubscribe</p>
+    <h1 class="mt-4 text-3xl font-semibold text-white">Invalid or expired link</h1>
+    <p class="mt-4 text-slate-300">The unsubscribe link appears to be invalid or has already been used. If you continue receiving emails, reply directly and we will remove you manually.</p>
+  <% } else { %>
+    <p class="text-sm uppercase tracking-[0.3em] text-emerald-300">Unsubscribe</p>
+    <h1 class="mt-4 text-3xl font-semibold text-white">Confirm unsubscribe</h1>
+    <p class="mt-4 text-slate-300">You are about to unsubscribe <span class="font-semibold"><%= email %></span> from future updates. This takes effect immediately.</p>
+    <form id="unsubscribe-form" class="mt-8 space-y-4">
+      <input type="hidden" name="token" value="<%= token %>" />
+      <button type="submit" class="w-full inline-flex items-center justify-center rounded-md bg-rose-500 px-5 py-3 text-sm font-semibold text-white hover:bg-rose-400">Unsubscribe</button>
+      <p id="unsubscribe-feedback" class="text-sm"></p>
+    </form>
+  <% } %>
+</section>
+
+<script>
+  const unsubscribeForm = document.getElementById('unsubscribe-form');
+  if (unsubscribeForm) {
+    unsubscribeForm.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const feedback = document.getElementById('unsubscribe-feedback');
+      feedback.textContent = '';
+      feedback.className = 'text-sm';
+      const formData = new FormData(unsubscribeForm);
+      const payload = Object.fromEntries(formData.entries());
+      try {
+        const response = await fetch('/api/unsubscribe', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+        if (response.ok) {
+          feedback.textContent = 'You have been unsubscribed. Thank you for reading!';
+          feedback.className = 'text-sm text-emerald-300 mt-3';
+          unsubscribeForm.querySelector('button').disabled = true;
+        } else {
+          const error = await response.json();
+          feedback.textContent = error.error || 'Unable to unsubscribe right now. Please reply to an email instead.';
+          feedback.className = 'text-sm text-rose-300 mt-3';
+        }
+      } catch (error) {
+        feedback.textContent = 'Network error. Please try again.';
+        feedback.className = 'text-sm text-rose-300 mt-3';
+      }
+    });
+  }
+</script>

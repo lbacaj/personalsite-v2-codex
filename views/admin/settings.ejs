@@ -1,0 +1,198 @@
+<section class="space-y-10">
+  <div>
+    <h1 class="text-3xl font-semibold text-white">Settings</h1>
+    <p class="text-slate-300 mt-2">Update site copy, social links, and integration credentials.</p>
+  </div>
+
+  <form id="settings-form" class="rounded-2xl border border-slate-900 bg-slate-950/60 p-6 space-y-6">
+    <h2 class="text-lg font-semibold text-white">Site copy</h2>
+    <div class="grid gap-4 md:grid-cols-2">
+      <div>
+        <label class="block text-sm text-slate-200">Site title</label>
+        <input name="site.title" value="<%= settings['site.title'] || '' %>" class="mt-1 w-full rounded-md border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-white" required />
+      </div>
+      <div>
+        <label class="block text-sm text-slate-200">Hero CTA text</label>
+        <input name="site.hero_cta_text" value="<%= settings['site.hero_cta_text'] || '' %>" class="mt-1 w-full rounded-md border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-white" required />
+      </div>
+      <div class="md:col-span-2">
+        <label class="block text-sm text-slate-200">Tagline / description</label>
+        <textarea name="site.description" rows="2" class="mt-1 w-full rounded-md border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-white" required><%= settings['site.description'] || '' %></textarea>
+      </div>
+      <div>
+        <label class="block text-sm text-slate-200">Hero heading</label>
+        <textarea name="site.hero_heading" rows="2" class="mt-1 w-full rounded-md border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-white" required><%= settings['site.hero_heading'] || '' %></textarea>
+      </div>
+      <div>
+        <label class="block text-sm text-slate-200">Hero subheading</label>
+        <textarea name="site.hero_subheading" rows="2" class="mt-1 w-full rounded-md border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-white" required><%= settings['site.hero_subheading'] || '' %></textarea>
+      </div>
+      <div class="md:col-span-2">
+        <label class="block text-sm text-slate-200">Hero paragraphs (JSON array)</label>
+        <textarea name="site.hero_paragraphs" rows="4" class="mt-1 w-full rounded-md border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-white"><%= settings['site.hero_paragraphs'] || '' %></textarea>
+      </div>
+      <div>
+        <label class="block text-sm text-slate-200">Hero image path</label>
+        <input name="site.hero_image_path" value="<%= settings['site.hero_image_path'] || '' %>" class="mt-1 w-full rounded-md border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-white" />
+      </div>
+      <div>
+        <label class="block text-sm text-slate-200">Hero image alt text</label>
+        <input name="site.hero_image_alt" value="<%= settings['site.hero_image_alt'] || '' %>" class="mt-1 w-full rounded-md border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-white" />
+      </div>
+      <div class="md:col-span-2">
+        <label class="block text-sm text-slate-200">About HTML</label>
+        <textarea name="site.about_html" rows="4" class="mt-1 w-full rounded-md border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-white"><%= settings['site.about_html'] || '' %></textarea>
+      </div>
+      <div class="md:col-span-2">
+        <label class="block text-sm text-slate-200">About page body HTML</label>
+        <textarea name="site.about_long_html" rows="10" class="mt-1 w-full rounded-md border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-white"><%= settings['site.about_long_html'] || '' %></textarea>
+      </div>
+    </div>
+
+    <div>
+      <h3 class="text-md font-semibold text-white">Social links JSON</h3>
+      <p class="text-xs text-slate-400 mt-1">Provide an array of objects: [{"label":"GitHub","url":"https://..."}]</p>
+      <textarea name="site.social_links" rows="4" class="mt-2 w-full rounded-md border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-white"><%= JSON.stringify(socialLinks, null, 2) %></textarea>
+    </div>
+
+    <h2 class="text-lg font-semibold text-white">Homepage highlights</h2>
+    <div class="grid gap-4 md:grid-cols-2">
+      <div class="md:col-span-2">
+        <label class="block text-sm text-slate-200">Appeared on (JSON array)</label>
+        <textarea name="site.appeared_on" rows="4" class="mt-1 w-full rounded-md border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-white"><%= settings['site.appeared_on'] || '' %></textarea>
+      </div>
+      <div class="md:col-span-2">
+        <label class="block text-sm text-slate-200">Recent essays (JSON array)</label>
+        <textarea name="site.recent_essays" rows="6" class="mt-1 w-full rounded-md border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-white"><%= settings['site.recent_essays'] || '' %></textarea>
+      </div>
+      <div>
+        <label class="block text-sm text-slate-200">Newsletter embed URL</label>
+        <input name="site.newsletter_embed_url" value="<%= settings['site.newsletter_embed_url'] || '' %>" class="mt-1 w-full rounded-md border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-white" />
+      </div>
+      <div class="md:col-span-2">
+        <label class="block text-sm text-slate-200">About page help cards (JSON array)</label>
+        <textarea name="site.about_help_cards" rows="4" class="mt-1 w-full rounded-md border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-white"><%= settings['site.about_help_cards'] || '' %></textarea>
+      </div>
+    </div>
+
+    <h2 class="text-lg font-semibold text-white">Integrations</h2>
+    <div class="grid gap-4 md:grid-cols-2">
+      <div>
+        <label class="block text-sm text-slate-200">GitHub username(s)</label>
+        <input name="integrations.github_user" value="<%= settings['integrations.github_user'] || '' %>" class="mt-1 w-full rounded-md border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-white" />
+      </div>
+      <div>
+        <label class="block text-sm text-slate-200">YouTube channel ID</label>
+        <input name="integrations.youtube_channel_id" value="<%= settings['integrations.youtube_channel_id'] || '' %>" class="mt-1 w-full rounded-md border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-white" />
+      </div>
+      <div>
+        <label class="block text-sm text-slate-200">Substack feed URL</label>
+        <input name="integrations.substack_feed_url" value="<%= settings['integrations.substack_feed_url'] || '' %>" class="mt-1 w-full rounded-md border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-white" />
+      </div>
+      <div>
+        <label class="block text-sm text-slate-200">OpenAI model</label>
+        <input name="integrations.openai_model" value="<%= settings['integrations.openai_model'] || '' %>" class="mt-1 w-full rounded-md border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-white" />
+      </div>
+      <div>
+        <label class="block text-sm text-slate-200">Mailgun domain</label>
+        <input name="mailgun.domain" value="<%= settings['mailgun.domain'] || '' %>" class="mt-1 w-full rounded-md border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-white" />
+      </div>
+      <div>
+        <label class="block text-sm text-slate-200">Mailgun from</label>
+        <input name="mailgun.from" value="<%= settings['mailgun.from'] || '' %>" class="mt-1 w-full rounded-md border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-white" />
+      </div>
+      <div>
+        <label class="block text-sm text-slate-200">Mailgun base URL</label>
+        <input name="mailgun.base_url" value="<%= settings['mailgun.base_url'] || '' %>" class="mt-1 w-full rounded-md border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-white" />
+      </div>
+    </div>
+
+    <button type="submit" class="inline-flex items-center gap-2 rounded-md bg-indigo-500 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-400">Save settings</button>
+    <span id="settings-feedback" class="ml-4 text-sm"></span>
+  </form>
+
+  <div class="rounded-2xl border border-slate-900 bg-slate-950/60 p-6 space-y-4">
+    <h2 class="text-lg font-semibold text-white">Sync content</h2>
+    <p class="text-sm text-slate-300">Trigger manual fetches from GitHub, YouTube, or Substack after updating settings.</p>
+    <div class="flex flex-wrap gap-3">
+      <button data-endpoint="github" class="sync-button inline-flex items-center gap-2 rounded-md border border-slate-800 px-4 py-2 text-sm font-semibold text-slate-200 hover:border-indigo-400">Fetch GitHub</button>
+      <button data-endpoint="youtube" class="sync-button inline-flex items-center gap-2 rounded-md border border-slate-800 px-4 py-2 text-sm font-semibold text-slate-200 hover:border-indigo-400">Fetch YouTube</button>
+      <button data-endpoint="substack" class="sync-button inline-flex items-center gap-2 rounded-md border border-slate-800 px-4 py-2 text-sm font-semibold text-slate-200 hover:border-indigo-400">Fetch Substack</button>
+    </div>
+    <p id="sync-feedback" class="text-sm"></p>
+  </div>
+</section>
+
+<script>
+  const settingsForm = document.getElementById('settings-form');
+  if (settingsForm) {
+    settingsForm.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const feedback = document.getElementById('settings-feedback');
+      feedback.textContent = '';
+      feedback.className = 'text-sm';
+      const formData = new FormData(settingsForm);
+      const payload = Object.fromEntries(formData.entries());
+      try {
+        const response = await fetch('/admin/settings', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-Token': window.csrfToken || ''
+          },
+          credentials: 'same-origin',
+          body: JSON.stringify(payload),
+        });
+        const data = await response.json();
+        if (response.ok) {
+          feedback.textContent = 'Settings saved.';
+          feedback.className = 'text-sm text-emerald-300';
+        } else {
+          feedback.textContent = data.error || 'Unable to save settings.';
+          feedback.className = 'text-sm text-rose-300';
+        }
+      } catch (error) {
+        feedback.textContent = 'Network error.';
+        feedback.className = 'text-sm text-rose-300';
+      }
+    });
+  }
+
+  document.querySelectorAll('.sync-button').forEach((button) => {
+    button.addEventListener('click', async () => {
+      const endpoint = button.dataset.endpoint;
+      const feedback = document.getElementById('sync-feedback');
+      feedback.textContent = `Fetching ${endpoint}...`;
+      feedback.className = 'text-sm text-slate-300';
+      try {
+        const response = await fetch(`/admin/fetch/${endpoint}`, {
+          method: 'POST',
+          headers: {
+            'X-CSRF-Token': window.csrfToken || ''
+          },
+          credentials: 'same-origin',
+        });
+        const data = await response.json();
+        if (response.ok) {
+          const processed = data.stats?.processed ?? data.stats?.videos ?? data.stats?.posts ?? 0;
+          const errorCount = data.stats?.errors?.length || 0;
+          let message = `Fetched ${processed} items.`;
+          if (data.stats?.summarized) {
+            message += ` Summaries updated: ${data.stats.summarized}.`;
+          }
+          if (errorCount) {
+            message += ` Summaries skipped: ${errorCount}. Check OpenAI settings.`;
+          }
+          feedback.textContent = message;
+          feedback.className = 'text-sm text-emerald-300';
+        } else {
+          feedback.textContent = data.error || 'Fetch failed.';
+          feedback.className = 'text-sm text-rose-300';
+        }
+      } catch (error) {
+        feedback.textContent = 'Network error.';
+        feedback.className = 'text-sm text-rose-300';
+      }
+    });
+  });
+</script>

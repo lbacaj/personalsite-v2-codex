@@ -1,0 +1,37 @@
+<section class="max-w-6xl mx-auto px-6 py-16">
+  <div class="max-w-3xl">
+    <h1 class="text-3xl font-semibold text-white">Products</h1>
+    <p class="text-slate-300 mt-2">Digital products, courses, and resources you can grab today.</p>
+  </div>
+  <div class="mt-10 grid gap-6 md:grid-cols-2">
+    <% if (products.length) { %>
+      <% products.forEach((product) => { %>
+        <article class="bg-slate-900/40 border border-slate-800/60 rounded-2xl overflow-hidden">
+          <% if (product.image_url) { %>
+            <img src="<%= product.image_url %>" alt="<%= product.title %>" class="w-full h-48 object-cover" loading="lazy" />
+          <% } %>
+          <div class="p-6 space-y-3">
+            <h2 class="text-xl font-semibold text-white"><%= product.title %></h2>
+            <% if (product.blurb) { %>
+              <p class="text-sm text-slate-300"><%= product.blurb %></p>
+            <% } else if (product.description) { %>
+              <p class="text-sm text-slate-300"><%= product.description %></p>
+            <% } %>
+            <div class="flex flex-wrap gap-2 text-xs text-slate-400">
+              <% if (product.tags) { %>
+                <% product.tags.split(',').forEach((tag) => { %>
+                  <span class="rounded-full bg-slate-800/80 px-3 py-1"><%= tag.trim() %></span>
+                <% }) %>
+              <% } %>
+            </div>
+            <a class="inline-flex items-center text-sm font-semibold text-indigo-300 hover:text-white" href="<%= product.source_url %>" target="_blank" rel="noopener noreferrer">
+              View product →
+            </a>
+          </div>
+        </article>
+      <% }) %>
+    <% } else { %>
+      <p class="text-slate-400">No products listed. Add Gumroad or custom products via the admin dashboard.</p>
+    <% } %>
+  </div>
+</section>
