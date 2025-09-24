@@ -144,7 +144,7 @@ function seedSettings() {
     'site.newsletter_embed_url': 'https://newsletter.memesmotivations.com/embed',
     'site.social_links': JSON.stringify([
       { label: 'GitHub', url: 'https://github.com/lbacaj', icon: 'github' },
-      { label: 'YouTube', url: 'https://youtube.com/@louiebacaj', icon: 'youtube' },
+      { label: 'YouTube', url: 'https://youtube.com/@lbacaj', icon: 'youtube' },
       { label: 'Substack', url: 'https://louiebacaj.substack.com', icon: 'newsletter' },
       { label: 'X (Twitter)', url: 'https://twitter.com/lbacaj', icon: 'x' },
       { label: 'LinkedIn', url: 'https://www.linkedin.com/in/lbacaj', icon: 'linkedin' }
