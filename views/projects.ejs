@@ -39,4 +39,53 @@
       <p class="text-slate-400">No projects synced yet. Use the admin dashboard to fetch your GitHub profile.</p>
     <% } %>
   </div>
+
+  <div class="mt-16 space-y-4">
+    <div class="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+      <h2 class="text-2xl font-semibold text-white">Apps & Products</h2>
+      <% if (Array.isArray(apps) && apps.length) { %>
+        <a class="text-sm text-indigo-300 hover:text-white" href="/apps">Browse all apps →</a>
+      <% } %>
+    </div>
+    <% if (Array.isArray(apps) && apps.length) { %>
+      <div class="grid gap-6 md:grid-cols-3">
+        <% apps.forEach((app) => { %>
+          <article class="flex h-full flex-col overflow-hidden rounded-2xl border border-slate-800/70 bg-slate-900/40">
+            <% if (app.image_url) { %>
+              <img src="<%= app.image_url %>" alt="<%= app.title %>" class="h-40 w-full object-cover" loading="lazy" />
+            <% } %>
+            <div class="flex flex-1 flex-col gap-3 p-6">
+              <h3 class="text-lg font-semibold text-white"><%= app.title %></h3>
+              <% if (app.blurb) { %>
+                <p class="text-sm text-slate-300 flex-1"><%= app.blurb %></p>
+              <% } else if (app.description) { %>
+                <p class="text-sm text-slate-300 flex-1"><%= app.description %></p>
+              <% } else { %>
+                <p class="text-sm text-slate-500 flex-1">New project coming soon.</p>
+              <% } %>
+              <div class="flex flex-wrap gap-2 text-xs text-slate-400">
+                <% if (app.tags) { %>
+                  <% app.tags.split(',').forEach((tag) => { %>
+                    <span class="rounded-full bg-slate-800/80 px-3 py-1"><%= tag.trim() %></span>
+                  <% }) %>
+                <% } %>
+              </div>
+            </div>
+            <% if (app.source_url) { %>
+              <a
+                class="inline-flex items-center justify-between gap-2 px-6 py-4 border-t border-slate-800/60 text-sm font-semibold text-indigo-300 hover:text-white"
+                href="<%= app.source_url %>"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Visit app →
+              </a>
+            <% } %>
+          </article>
+        <% }) %>
+      </div>
+    <% } else { %>
+      <p class="text-sm text-slate-400">Publish some apps from the admin dashboard to showcase them here.</p>
+    <% } %>
+  </div>
 </section>

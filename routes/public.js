@@ -112,9 +112,12 @@ router.get('/', (req, res) => {
 
 router.get('/projects', (req, res) => {
   const projects = getItemsByType('github');
+  const featuredApps = getItemsByType('app', { featuredOnly: true });
+  const apps = featuredApps.length ? featuredApps : getItemsByType('app');
   res.render('projects', {
     title: 'Projects',
     projects,
+    apps,
   });
 });
 
