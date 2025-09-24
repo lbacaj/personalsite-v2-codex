@@ -44,7 +44,27 @@ router.get('/', (req, res) => {
       settings['site.hero_image_alt'] || 'Louie Bacaj smiling in front of a bookshelf',
   };
 
-  const appearedOn = getJsonSetting('site.appeared_on', []);
+  const indieHackersUrl =
+    'https://www.indiehackers.com/post/quitting-his-venture-backed-startup-to-make-300k-yr-from-small-bets-powl5CXvHQRKROJSXpJ9';
+  const indieHackersImage = '/images/legacy/indie-hackers.png';
+  const indieHackersFeature = {
+    title: 'Indie Hackers',
+    url: indieHackersUrl,
+    source_url: indieHackersUrl,
+    image: indieHackersImage,
+    image_url: indieHackersImage,
+    alt: 'Indie Hackers feature on Louie Bacaj',
+  };
+
+  const appearedOnSetting = getJsonSetting('site.appeared_on', []);
+  const appearedOn = Array.isArray(appearedOnSetting) ? [...appearedOnSetting] : [];
+  const hasIndieHackersAppearance = appearedOn.some(
+    (feature) => (feature.url || feature.source_url) === indieHackersUrl
+  );
+  if (!hasIndieHackersAppearance) {
+    appearedOn.unshift(indieHackersFeature);
+  }
+  const appearedOnDisplay = appearedOn.slice(0, 6);
   const recentEssays = getJsonSetting('site.recent_essays', []);
   const newsletterEmbedUrl = settings['site.newsletter_embed_url'] || '';
 
@@ -54,7 +74,14 @@ router.get('/', (req, res) => {
   const newsletterPosts = getItemsByType('substack', { limit: 3 });
   const apps = getItemsByType('app', { featuredOnly: true, limit: 3 });
   const featuredApps = apps.length ? apps : getItemsByType('app', { limit: 3 });
-  const features = getItemsByType('feature', { featuredOnly: true, limit: 12 });
+  const featuresRaw = getItemsByType('feature', { featuredOnly: true, limit: 12 });
+  const features = Array.isArray(featuresRaw) ? [...featuresRaw] : [];
+  const hasIndieHackersFeature = features.some(
+    (feature) => (feature.url || feature.source_url) === indieHackersUrl
+  );
+  if (!hasIndieHackersFeature) {
+    features.unshift(indieHackersFeature);
+  }
 
   const socialPosts = (() => {
     const xPosts = getItemsByType('x_post', { limit: 5 });
@@ -71,7 +98,7 @@ router.get('/', (req, res) => {
 
   res.render('index', {
     hero,
-    appearedOn,
+    appearedOn: appearedOnDisplay,
     recentEssays,
     newsletterEmbedUrl,
     openSource,
@@ -136,14 +163,15 @@ router.get('/about', (req, res) => {
   const aboutHtml = settings['site.about_long_html'] || '';
   const heroImage = settings['site.hero_image_path'] || '/images/legacy/LouieSocialv2.PNG';
   const heroImageAlt = settings['site.hero_image_alt'] || 'Louie Bacaj smiling in front of a bookshelf';
-  const helpCards = getJsonSetting('site.about_help_cards', []);
+  const featuredApps = getItemsByType('app', { featuredOnly: true, limit: 3 });
+  const apps = featuredApps.length ? featuredApps : getItemsByType('app', { limit: 3 });
 
   res.render('about', {
     title: 'About',
     aboutHtml,
     heroImage,
     heroImageAlt,
-    helpCards,
+    apps,
   });
 });
 
